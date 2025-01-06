@@ -2,6 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const session  = require('express-session');
+
+app.use(session({
+    secret: 'session_secret',
+    resave:false,
+    saveUninitialized:true,
+    cookie: { secure: true, sameSite:"None" }
+}));
+
 const UserRouter = require('./src/router/userRouts');
 
 app.use(cors({

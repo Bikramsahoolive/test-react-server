@@ -1,27 +1,39 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
-
 const session  = require('express-session');
 
-app.use(session({
-    secret: 'session_secret',
-    resave:false,
-    saveUninitialized:true,
-    cookie: { secure: true, sameSite:"None" }
-}));
+
+const app = express();
 
 const UserRouter = require('./src/router/userRouts');
 
+
+
 app.use(cors({
     origin:'http://localhost:3000',
-    credentials:true
+    credentials: true
 }));
+
+app.use(session({
+    secret: 'sessionsecret',
+    resave:false,
+    saveUninitialized:true,
+    cookie: {
+        secure: true
+      }
+}));
+
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({limit:'10mb'}));
 
 app.get('/',(req,res)=>{
+    
+    req.session.data = "session_data"
     res.send('React Backend running.');
+})
+
+app.get('/sess',(req,res)=>{
+    res.send(req.session.data);
 })
 app.use('/api',UserRouter);
 

@@ -45,9 +45,6 @@ async function registerUser(req,res){
 async function loginUser(req,res){
     const {email,password,captcha,districtCode} = req.body;
     try {
-
-        console.log(captcha,req.session.captcha);
-        
         const q = 'SELECT * FROM "UserData" WHERE email = $1';
         const value = [email];
         const result = await client.query(q,value);
@@ -124,10 +121,26 @@ function captchaData(req,res){
         charPreset: '1234567890'
     };
     let captcha = svgCaptcha.create(options);
-    req.session.captcha = captcha.text;
-    console.log(req.session.captcha);
-    res.status(200).send(captcha.data);
+    // req.session.captcha = captcha.text;
+    // res.status(200).send(captcha.data);
+    res.status(200).json(captcha);
     
 }
 
-module.exports = {registerUser,loginUser,forgotPassword,verifyPassword,captchaData}
+function checkAuth(req,res){
+    try {
+        
+        const userData = jwt.verify(req.headers['auth'],'jwt-secKey');
+        console.log(userData);
+        
+        res.status(200).json({...userData,isAuthorized:true});
+        
+        
+    } catch (error) {
+        console.log(error);
+        
+        res.status(400).json({isAuthorized:false,message:"Token Expired, Login again."});
+    }
+}
+
+module.exports = {registerUser,loginUser,forgotPassword,verifyPassword,captchaData,checkAuth}

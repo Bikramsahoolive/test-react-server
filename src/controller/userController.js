@@ -29,7 +29,6 @@ async function registerUser(req,res){
                 
                 const q = `INSERT INTO public."UserData" (name,email,password,districtcode,usertype) VALUES ($1,$2,$3,$4,$5) RETURNING *;`;
         const value = [name,email,hash,+distCode,userType];
-        console.log(value);
         
         const result = await client.query(q,value);
         
@@ -131,7 +130,6 @@ function checkAuth(req,res){
     try {
         
         const userData = jwt.verify(req.headers['auth'],'jwt-secKey');
-        console.log(userData);
         
         res.status(200).json({...userData,isAuthorized:true});
         

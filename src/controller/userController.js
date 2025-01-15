@@ -77,7 +77,7 @@ async function forgotPassword(req,res){
         const userData = result.rows[0];
         if(userData){
             delete userData.password;
-            res.status(200).json({status:'success',message:'OTP Sent Successfully.'});
+            res.status(200).json({status:'success',message:'OTP Sent Successfully', email:userData.email});
         }else{
             res.status(400).json({status:'failure',message:'User Not Found.'});
         }
